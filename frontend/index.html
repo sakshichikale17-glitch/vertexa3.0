@@ -214,6 +214,67 @@ print(division)</code></pre>
           </div>
 
           <div class="lesson-section">
+            <h3>Variables and data types: a closer look</h3>
+            <p>
+              A variable is a name we give to a value so we can use it later. Python automatically decides the <strong>data type</strong> based on the value stored.
+            </p>
+            <p><strong>Real-life analogy:</strong> A variable is like a label on a box in a warehouse. The label tells us what is inside, and the box can hold a number, a word, or a yes/no answer.</p>
+            <ul>
+              <li><strong>int</strong> stores whole numbers such as 7, 12, or -3.</li>
+              <li><strong>float</strong> stores decimals such as 3.5 or 10.0.</li>
+              <li><strong>str</strong> stores text such as "hello" or "student".</li>
+              <li><strong>bool</strong> stores either True or False.</li>
+            </ul>
+            <pre><code>student_count = 25
+average_score = 87.5
+student_name = "Aisha"
+passed = True
+
+print(student_count)
+print(average_score)
+print(student_name)
+print(passed)</code></pre>
+            <p class="code-note">Expected output:</p>
+            <pre><code>25
+87.5
+Aisha
+True</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Execution trace</h3>
+            <p>Python reads code from top to bottom, updating each variable as it goes. Here is the same idea step by step.</p>
+            <pre><code>hours = 3
+rate = 15
+pay = hours * rate
+print(pay)</code></pre>
+            <div class="trace-box" aria-label="execution trace for hourly pay example">
+              <div class="trace-row"><span class="trace-label">Line 1</span><span class="trace-code">hours = 3</span><span class="trace-note">Create a variable named <code>hours</code> with the value 3.</span></div>
+              <div class="trace-row"><span class="trace-label">Line 2</span><span class="trace-code">rate = 15</span><span class="trace-note">Create a variable named <code>rate</code> with the value 15.</span></div>
+              <div class="trace-row"><span class="trace-label">Line 3</span><span class="trace-code">pay = hours * rate</span><span class="trace-note">Python calculates 3 × 15 and stores the result in <code>pay</code>, which becomes 45.</span></div>
+              <div class="trace-row"><span class="trace-label">Line 4</span><span class="trace-code">print(pay)</span><span class="trace-note">The program shows <code>45</code> on the screen.</span></div>
+            </div>
+            <p class="code-note">Expected output:</p>
+            <pre><code>45</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Worked example</h3>
+            <p>Suppose a student is buying notebooks. The program stores the number of notebooks, the price per notebook, and the total cost.</p>
+            <pre><code>notebooks = 4
+price_per_book = 6
+total_cost = notebooks * price_per_book
+print("Total cost:")
+print(total_cost)</code></pre>
+            <p>
+              The first line creates a variable called <code>notebooks</code> and stores the integer 4. The second line stores the price 6 in <code>price_per_book</code>. The third line multiplies 4 × 6, which gives 24, and stores that in <code>total_cost</code>. The last two lines print a label and the total, so the output is:
+            </p>
+            <p class="code-note">Expected output:</p>
+            <pre><code>Total cost:
+24</code></pre>
+          </div>
+
+          <div class="lesson-section">
             <h3>Step-by-step trace</h3>
             <p>Here is a small example and how Python reads it line by line.</p>
             <pre><code>first = 5
