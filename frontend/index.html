@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -17,6 +17,7 @@
       <button class="nav-link active" data-target="dashboard">Dashboard</button>
       <button class="nav-link" data-target="roadmap">Roadmap</button>
       <button class="nav-link" data-target="lesson">Learn DSA</button>
+      <button class="nav-link" data-target="ai-tutor">AI Tutor</button>
       <button class="nav-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
       <button class="nav-link coming-soon" data-message="Practice is coming soon.">Practice</button>
       <button class="nav-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
@@ -34,7 +35,7 @@
           <h1>Welcome back, student.</h1>
           <p>
             Your DSA practice is moving forward. Keep the momentum going and
-            finish this week’s challenge with confidence.
+            finish this weekâ€™s challenge with confidence.
           </p>
         </div>
         <button id="openRoadmapBtn" class="btn-primary">Open roadmap</button>
@@ -147,7 +148,7 @@
             <p>
               A variable is like a labeled box where we store a value. We can then use that value later in our program.
             </p>
-            <p><strong>Real-life analogy:</strong> Think of a variable as a notebook label such as “apple_count = 5”. The label helps you find the value quickly.</p>
+            <p><strong>Real-life analogy:</strong> Think of a variable as a notebook label such as â€œapple_count = 5â€. The label helps you find the value quickly.</p>
             <pre><code>age = 18
 name = "Aisha"
 print(age)
@@ -185,8 +186,8 @@ True</code></pre>
 
           <div class="lesson-section">
             <h3>Using <code>print()</code></h3>
-            <p><code>print()</code> shows information on the screen so we can check our program’s result.</p>
-            <p><strong>Real-life analogy:</strong> It is like saying “show me what is inside the box” so you can check your answer.</p>
+            <p><code>print()</code> shows information on the screen so we can check our programâ€™s result.</p>
+            <p><strong>Real-life analogy:</strong> It is like saying â€œshow me what is inside the boxâ€ so you can check your answer.</p>
             <pre><code>print("Hello, Learner!")
 print(3 + 4)</code></pre>
             <p class="code-note">Expected output:</p>
@@ -251,7 +252,7 @@ print(pay)</code></pre>
             <div class="trace-box" aria-label="execution trace for hourly pay example">
               <div class="trace-row"><span class="trace-label">Line 1</span><span class="trace-code">hours = 3</span><span class="trace-note">Create a variable named <code>hours</code> with the value 3.</span></div>
               <div class="trace-row"><span class="trace-label">Line 2</span><span class="trace-code">rate = 15</span><span class="trace-note">Create a variable named <code>rate</code> with the value 15.</span></div>
-              <div class="trace-row"><span class="trace-label">Line 3</span><span class="trace-code">pay = hours * rate</span><span class="trace-note">Python calculates 3 × 15 and stores the result in <code>pay</code>, which becomes 45.</span></div>
+              <div class="trace-row"><span class="trace-label">Line 3</span><span class="trace-code">pay = hours * rate</span><span class="trace-note">Python calculates 3 Ã— 15 and stores the result in <code>pay</code>, which becomes 45.</span></div>
               <div class="trace-row"><span class="trace-label">Line 4</span><span class="trace-code">print(pay)</span><span class="trace-note">The program shows <code>45</code> on the screen.</span></div>
             </div>
             <p class="code-note">Expected output:</p>
@@ -267,7 +268,7 @@ total_cost = notebooks * price_per_book
 print("Total cost:")
 print(total_cost)</code></pre>
             <p>
-              The first line creates a variable called <code>notebooks</code> and stores the integer 4. The second line stores the price 6 in <code>price_per_book</code>. The third line multiplies 4 × 6, which gives 24, and stores that in <code>total_cost</code>. The last two lines print a label and the total, so the output is:
+              The first line creates a variable called <code>notebooks</code> and stores the integer 4. The second line stores the price 6 in <code>price_per_book</code>. The third line multiplies 4 Ã— 6, which gives 24, and stores that in <code>total_cost</code>. The last two lines print a label and the total, so the output is:
             </p>
             <p class="code-note">Expected output:</p>
             <pre><code>Total cost:
@@ -331,6 +332,65 @@ print(answer)</code></pre>
             <p>Big O Notation</p>
             <button id="nextLessonPlaceholderBtn" class="btn-ghost" data-target="roadmap">Back to roadmap</button>
           </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="ai-tutor" class="page-section" aria-label="AI Tutor">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">AI support</p>
+          <h2>LearnLoop AI Tutor</h2>
+        </div>
+        <button id="aiTutorBackBtn" class="btn-ghost">Back to dashboard</button>
+      </div>
+
+      <div class="lesson-layout">
+        <article class="lesson-panel lesson-body">
+          <div class="lesson-section">
+            <h3>Ask the AI tutor</h3>
+            <p>
+              Pick a topic, type your question, and optionally share your answer or reasoning.
+              The tutor explains ideas in simple language and asks a clarifying question when the evidence is not enough.
+            </p>
+          </div>
+
+          <form id="ai-tutor-form" class="ai-tutor-form">
+            <div class="form-group">
+              <label for="ai-topic">DSA topic</label>
+              <select id="ai-topic" name="topic">
+                <option value="Python basics">Python basics</option>
+                <option value="Variables and data types">Variables and data types</option>
+                <option value="Arrays">Arrays</option>
+                <option value="Strings">Strings</option>
+                <option value="Stacks and queues">Stacks and queues</option>
+                <option value="Trees">Trees</option>
+                <option value="Graphs">Graphs</option>
+                <option value="General DSA">General DSA</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ai-question">Your question</label>
+              <textarea id="ai-question" name="question" rows="5" placeholder="Example: What is the difference between a stack and a queue?"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="ai-answer">Your answer or reasoning (optional)</label>
+              <textarea id="ai-answer" name="studentAnswer" rows="4" placeholder="Optional: explain what you think or give your answer."></textarea>
+            </div>
+
+            <div class="runner-actions">
+              <button id="ai-submit-btn" class="btn-primary" type="submit">Ask tutor</button>
+              <button id="ai-reset-btn" class="btn-ghost" type="button">Clear</button>
+            </div>
+          </form>
+        </article>
+
+        <aside class="lesson-panel lesson-box">
+          <h3>Tutor response</h3>
+          <div id="ai-status" class="runner-status">Ready</div>
+          <div id="ai-response" class="ai-response-box">Your tutor response will appear here.</div>
         </aside>
       </div>
     </section>

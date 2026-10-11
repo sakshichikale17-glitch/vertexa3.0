@@ -391,6 +391,55 @@ a {
   gap: 1rem;
 }
 
+.ai-tutor-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  background: rgba(9, 13, 26, 0.9);
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  font: inherit;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: Consolas, Monaco, monospace;
+  line-height: 1.5;
+}
+
+.ai-response-box {
+  min-height: 220px;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(146, 161, 255, 0.18);
+  background: rgba(9, 13, 26, 0.9);
+  color: var(--text);
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.ai-response-box.error {
+  border-color: rgba(255, 125, 125, 0.6);
+  color: #ffd1d1;
+}
+
 .quiz-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1rem;

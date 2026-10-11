@@ -896,6 +896,121 @@ function attachNavigation() {
   }
 }
 
+
+function setupAiTutor() {
+  const form = document.getElementById('ai-tutor-form');
+  const topicSelect = document.getElementById('ai-topic');
+  const questionInput = document.getElementById('ai-question');
+  const answerInput = document.getElementById('ai-answer');
+  const submitBtn = document.getElementById('ai-submit-btn');
+  const resetBtn = document.getElementById('ai-reset-btn');
+  const statusEl = document.getElementById('ai-status');
+  const responseEl = document.getElementById('ai-response');
+  const backBtn = document.getElementById('aiTutorBackBtn');
+
+  if (
+    !form ||
+    !topicSelect ||
+    !questionInput ||
+    !answerInput ||
+    !submitBtn ||
+    !resetBtn ||
+    !statusEl ||
+    !responseEl
+  ) {
+    return;
+  }
+
+  if (form.dataset.bound === 'true') {
+    return;
+  }
+
+  form.dataset.bound = 'true';
+
+  const setStatus = (message, isError = false) => {
+    statusEl.textContent = message;
+    statusEl.style.color = isError ? '#ffb4b4' : '#d2e9ff';
+  };
+
+  const clearForm = () => {
+    form.reset();
+    topicSelect.value = 'Python basics';
+    questionInput.value = '';
+    answerInput.value = '';
+    responseEl.textContent = 'Your tutor response will appear here.';
+    responseEl.classList.remove('error');
+    setStatus('Ready');
+  };
+
+  resetBtn.addEventListener('click', clearForm);
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      showSection('dashboard');
+    });
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const topic = (topicSelect.value || '').trim();
+    const question = questionInput.value.trim();
+    const studentAnswer = answerInput.value.trim();
+
+    if (!question) {
+      setStatus('Please enter a question first.', true);
+      questionInput.focus();
+      return;
+    }
+
+    responseEl.textContent = 'Thinking...';
+    responseEl.classList.remove('error');
+    setStatus('Asking the tutor...');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Asking...';
+
+    try {
+      const response = await fetch('http://localhost:3000/api/tutor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          topic: topic || 'General DSA',
+          question: question,
+          studentAnswer: studentAnswer || ''
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.status !== 'ok' || !data.answer) {
+        const backendMessage = data && typeof data.message === 'string' ? data.message : 'The AI tutor is temporarily busy.';
+        throw new Error(backendMessage);
+      }
+
+      responseEl.textContent = data.answer;
+      setStatus('Tutor response ready');
+    } catch (error) {
+      const message = error && error.message ? error.message : 'The AI tutor is temporarily busy.';
+      console.error('AI Tutor request failed:', error);
+
+      const friendlyMessage = message.toLowerCase().includes('quota') || message.toLowerCase().includes('rate-limited')
+        ? 'The AI tutor is currently rate-limited or quota is exhausted. Please try again in a moment.'
+        : message.toLowerCase().includes('temporarily busy') || message.toLowerCase().includes('temporarily unavailable') || message.toLowerCase().includes('not configured')
+          ? 'The AI tutor is temporarily busy. Please try again in a moment.'
+          : message;
+
+      responseEl.textContent = friendlyMessage;
+      responseEl.classList.add('error');
+      setStatus('Tutor request failed', true);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Ask tutor';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   attachNavigation();
   renderRoadmap();
@@ -904,6 +1019,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateLessonProgressUI();
   setupPythonRunner();
   setupPracticeExercises();
+  setupAiTutor();
 
   const statusLabel = document.getElementById('backend-status-label');
   const statusDot = document.querySelector('.status-dot');
