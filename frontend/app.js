@@ -87,6 +87,12 @@ const roadmap = [
 
 const STORAGE_KEY = 'learnloop-dsa-progress';
 const LESSON_STATE_KEY = 'learnloop-python-lesson-state';
+const PYTHON_STARTER_CODE = `ages = [12, 15, 18]
+print("Student ages:", ages)
+print("Average age:", sum(ages) / len(ages))`;
+
+let pyodideInstance = null;
+let pyodideInitPromise = null;
 
 const lessonQuestions = [
   {
@@ -287,6 +293,102 @@ function renderLessonQuiz() {
         showToast('Not quite — try again.');
       }
     });
+  });
+}
+
+function setPythonOutput(message, isError = false) {
+  const outputElement = document.getElementById('python-output');
+  const statusElement = document.getElementById('python-status');
+
+  if (!outputElement || !statusElement) {
+    return;
+  }
+
+  outputElement.textContent = message;
+  outputElement.classList.toggle('error', isError);
+  statusElement.textContent = isError ? 'Execution failed' : 'Ready';
+}
+
+async function ensurePyodide() {
+  if (pyodideInstance) {
+    return pyodideInstance;
+  }
+
+  if (!window.loadPyodide) {
+    throw new Error('Pyodide did not load. This browser needs internet access to fetch the Pyodide files from the CDN.');
+  }
+
+  if (!pyodideInitPromise) {
+    const statusElement = document.getElementById('python-status');
+    if (statusElement) {
+      statusElement.textContent = 'Loading Python runtime...';
+    }
+
+    pyodideInitPromise = window.loadPyodide({
+      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'
+    }).then((instance) => {
+      pyodideInstance = instance;
+      return instance;
+    });
+  }
+
+  return pyodideInitPromise;
+}
+
+function setupPythonRunner() {
+  const editor = document.getElementById('python-code-input');
+  const runButton = document.getElementById('runPythonBtn');
+  const resetButton = document.getElementById('resetPythonBtn');
+  const statusElement = document.getElementById('python-status');
+  const outputElement = document.getElementById('python-output');
+
+  if (!editor || !runButton || !resetButton || !statusElement || !outputElement) {
+    return;
+  }
+
+  editor.value = PYTHON_STARTER_CODE;
+  outputElement.textContent = 'Output will appear here.';
+  outputElement.classList.remove('error');
+  statusElement.textContent = 'Ready';
+
+  const setRunningState = (isRunning) => {
+    runButton.disabled = isRunning;
+    runButton.textContent = isRunning ? 'Running...' : 'Run code';
+  };
+
+  resetButton.addEventListener('click', () => {
+    editor.value = PYTHON_STARTER_CODE;
+    setPythonOutput('Output will appear here.');
+    statusElement.textContent = 'Reset to starter example';
+  });
+
+  runButton.addEventListener('click', async () => {
+    const code = editor.value.trim();
+    if (!code) {
+      setPythonOutput('Please enter some Python code before running.', true);
+      return;
+    }
+
+    setRunningState(true);
+    setPythonOutput('Loading Python environment...');
+
+    try {
+      const pyodide = await ensurePyodide();
+      const outputLines = [];
+      pyodide.setStdout({ batched: (text) => outputLines.push(String(text)) });
+      pyodide.setStderr({ batched: (text) => outputLines.push(String(text)) });
+
+      await pyodide.runPythonAsync(code);
+
+      const output = outputLines.join('') || 'Program finished successfully.';
+      setPythonOutput(output.trim() || 'Program finished successfully.');
+      statusElement.textContent = 'Execution complete';
+    } catch (error) {
+      const message = error && error.message ? error.message : String(error);
+      setPythonOutput(`Python error:\n${message}`, true);
+    } finally {
+      setRunningState(false);
+    }
   });
 }
 
@@ -512,6 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderDashboard();
   renderLessonQuiz();
   updateLessonProgressUI();
+  setupPythonRunner();
 
   const statusLabel = document.getElementById('backend-status-label');
   const statusDot = document.querySelector('.status-dot');

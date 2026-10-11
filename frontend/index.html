@@ -303,6 +303,21 @@ print(answer)</code></pre>
           <h3>Knowledge check</h3>
           <div id="quiz-container"></div>
 
+          <div class="python-runner">
+            <div class="runner-header">
+              <h3>Python playground</h3>
+              <span class="chip chip-secondary">Pyodide</span>
+            </div>
+            <label class="runner-label" for="python-code-input">Starter example</label>
+            <textarea id="python-code-input" spellcheck="false" aria-label="Python code editor"></textarea>
+            <div class="runner-actions">
+              <button id="runPythonBtn" class="btn-primary" type="button">Run code</button>
+              <button id="resetPythonBtn" class="btn-ghost" type="button">Reset example</button>
+            </div>
+            <div id="python-status" class="runner-status">Ready</div>
+            <pre id="python-output" class="python-output">Output will appear here.</pre>
+          </div>
+
           <div class="next-lesson-box">
             <h4>Next lesson placeholder</h4>
             <p>Big O Notation</p>
@@ -327,6 +342,7 @@ print(answer)</code></pre>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
