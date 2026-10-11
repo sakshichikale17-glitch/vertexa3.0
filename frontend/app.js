@@ -1019,6 +1019,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateLessonProgressUI();
   setupPythonRunner();
   setupPracticeExercises();
+  setupCodeLab();
   setupAiTutor();
 
   const statusLabel = document.getElementById('backend-status-label');
@@ -1045,3 +1046,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('LearnLoop backend check failed:', error);
   }
 });
+
+
+
+function setupCodeLab() {
+  const codeInput = document.getElementById('codeLabPythonInput');
+  const runButton = document.getElementById('codeLabRunBtn');
+  const resetButton = document.getElementById('codeLabResetBtn');
+  const status = document.getElementById('codeLabStatus');
+  const output = document.getElementById('codeLabOutput');
+  const backButton = document.getElementById('codeLabBackBtn');
+
+  if (!codeInput || !runButton || !resetButton || !status || !output) {
+    console.warn('Code Lab elements were not found.');
+    return;
+  }
+
+  const starterCode = 'print("Hello, LearnLoop AI!")\nprint(10 + 20)';
+
+  runButton.addEventListener('click', async () => {
+    runButton.disabled = true;
+    status.textContent = 'Starting Python...';
+    output.textContent = '';
+
+    try {
+      const pyodide = await ensurePyodide();
+      const lines = [];
+
+      pyodide.setStdout({
+        batched: (text) => lines.push(text)
+      });
+      pyodide.setStderr({
+        batched: (text) => lines.push(text)
+      });
+
+      status.textContent = 'Running code...';
+      await pyodide.runPythonAsync(codeInput.value);
+
+      output.textContent = lines.join('\n') || 'Code ran successfully with no output.';
+      status.textContent = 'Finished successfully';
+    } catch (error) {
+      output.textContent = String(error);
+      status.textContent = 'There was an error. Check your code.';
+    } finally {
+      runButton.disabled = false;
+    }
+  });
+
+  resetButton.addEventListener('click', () => {
+    codeInput.value = starterCode;
+    status.textContent = 'Ready';
+    output.textContent = 'Output will appear here.';
+  });
+
+  if (backButton) {
+    backButton.addEventListener('click', () => showSection('dashboard'));
+  }
+}

@@ -18,7 +18,7 @@
       <button class="nav-link" data-target="roadmap">Roadmap</button>
       <button class="nav-link" data-target="lesson">Learn DSA</button>
       <button class="nav-link" data-target="ai-tutor">AI Tutor</button>
-      <button class="nav-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
+      <button class="nav-link" data-target="code-lab">Code Lab</button>
       <button class="nav-link coming-soon" data-message="Practice is coming soon.">Practice</button>
       <button class="nav-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
       <button class="nav-link coming-soon" data-message="Games are coming soon.">Games</button>
@@ -74,7 +74,7 @@
         </div>
         <div class="quick-links-grid">
           <button class="feature-link" data-target="lesson">Learn DSA</button>
-          <button class="feature-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
+          <button class="feature-link" data-target="code-lab">Code Lab</button>
           <button class="feature-link coming-soon" data-message="Practice is coming soon.">Practice</button>
           <button class="feature-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
         </div>
@@ -331,6 +331,45 @@ print(answer)</code></pre>
             <h4>Next lesson placeholder</h4>
             <p>Big O Notation</p>
             <button id="nextLessonPlaceholderBtn" class="btn-ghost" data-target="roadmap">Back to roadmap</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="code-lab" class="page-section" aria-label="Python Code Lab">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Practice by coding</p>
+          <h2>Python Code Lab</h2>
+          <p>Write Python code, run it, and learn from the output.</p>
+        </div>
+        <button id="codeLabBackBtn" class="btn-ghost" type="button">Back to dashboard</button>
+      </div>
+
+      <div class="lesson-layout">
+        <article class="lesson-panel lesson-body">
+          <div class="lesson-section">
+            <h3>Your Python workspace</h3>
+            <p>Try changing the example or write your own Python code.</p>
+            <p><strong>Example:</strong> Print a greeting and calculate a sum.</p>
+          </div>
+        </article>
+
+        <aside class="lesson-panel lesson-box">
+          <div class="python-runner">
+            <div class="runner-header">
+              <h3>Python editor</h3>
+              <span class="chip chip-secondary">Pyodide</span>
+            </div>
+            <label class="runner-label" for="codeLabPythonInput">Python code</label>
+            <textarea id="codeLabPythonInput" spellcheck="false">print("Hello, LearnLoop AI!")
+print(10 + 20)</textarea>
+            <div class="runner-actions">
+              <button id="codeLabRunBtn" class="btn-primary" type="button">Run code</button>
+              <button id="codeLabResetBtn" class="btn-ghost" type="button">Reset example</button>
+            </div>
+            <div id="codeLabStatus" class="runner-status">Ready</div>
+            <pre id="codeLabOutput" class="python-output">Output will appear here.</pre>
           </div>
         </aside>
       </div>
