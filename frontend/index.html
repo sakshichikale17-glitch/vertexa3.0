@@ -3,78 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LearnLoop AI</title>
+  <title>LearnLoop AI | Student Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
-    <div class="logo">
+    <div class="logo" aria-label="LearnLoop AI logo">
       <span class="logo-mark">LL</span>
       <span class="logo-text">LearnLoop AI</span>
     </div>
-    <nav class="site-nav">
-      <a href="#features" class="nav-link">Features</a>
-      <a href="#how" class="nav-link">How it works</a>
-      <a href="#cta" class="nav-link btn-primary">Get started</a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <button class="nav-link active" data-target="dashboard">Dashboard</button>
+      <button class="nav-link" data-target="roadmap">Roadmap</button>
+      <button class="nav-link coming-soon" data-message="Learn DSA is coming soon.">Learn DSA</button>
+      <button class="nav-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
+      <button class="nav-link coming-soon" data-message="Practice is coming soon.">Practice</button>
+      <button class="nav-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
+      <button class="nav-link coming-soon" data-message="Games are coming soon.">Games</button>
+      <button class="nav-link coming-soon" data-message="Progress tracking is coming soon.">Progress</button>
+      <button class="nav-link btn-primary nav-cta" data-target="dashboard">Get started</button>
     </nav>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="backend-status">
-        <span class="status-dot"></span>
-        <span id="backend-status-label">Backend: checking…</span>
+  <main class="app-shell">
+    <section id="dashboard" class="page-section active" aria-label="Student dashboard">
+      <div class="welcome-panel">
+        <div class="welcome-copy">
+          <p class="eyebrow">Learning plan</p>
+          <h1>Welcome back, student.</h1>
+          <p>
+            Your DSA practice is moving forward. Keep the momentum going and
+            finish this week’s challenge with confidence.
+          </p>
+        </div>
+        <button id="openRoadmapBtn" class="btn-primary">Open roadmap</button>
       </div>
-      <h1>Practice interviews with AI.</h1>
-      <p class="hero-subtitle">
-        LearnLoop AI is an interactive learning platform that runs mock
-        interviews, generates questions, and executes Python code in your
-        browser. No account needed to start.
-      </p>
-      <div class="hero-actions">
-        <a href="#cta" class="btn-primary">Start a mock interview</a>
-        <a href="#how" class="btn-ghost">Learn more</a>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-label">Overall progress</span>
+          <strong id="progress-percent">0%</strong>
+          <small id="progress-summary">0 of 12 weeks completed</small>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Completed</span>
+          <strong id="completed-weeks">0</strong>
+          <small>weeks finished</small>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Current streak</span>
+          <strong>4 days</strong>
+          <small>consistent practice</small>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Next milestone</span>
+          <strong id="next-milestone">Week 1</strong>
+          <small>Keep learning</small>
+        </article>
       </div>
+
+      <section class="quick-links panel">
+        <div class="panel-head">
+          <h3>Quick Links</h3>
+          <span class="chip">Study path</span>
+        </div>
+        <div class="quick-links-grid">
+          <button class="feature-link coming-soon" data-message="Learn DSA is coming soon.">Learn DSA</button>
+          <button class="feature-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
+          <button class="feature-link coming-soon" data-message="Practice is coming soon.">Practice</button>
+          <button class="feature-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Continue Learning</h3>
+            <span class="chip">Today</span>
+          </div>
+          <div id="continue-learning" class="list-stack"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Recent Activity</h3>
+            <span class="chip chip-secondary">Updated</span>
+          </div>
+          <ul id="recent-activity" class="activity-list"></ul>
+        </section>
+      </div>
+
+      <section class="future-principles panel">
+        <div class="panel-head">
+          <h3>Future learning principles</h3>
+          <span class="chip chip-secondary">Planned</span>
+        </div>
+        <ul class="principles-list">
+          <li>Simple explanations and Python traces with real-world analogies.</li>
+          <li>AI misconception detector that flags uncertainty and asks clarifying questions.</li>
+          <li>Adaptive learning based on mistakes, attempts, and past performance.</li>
+          <li>Evidence-based progress tracking for answers, hints, and assessment improvement.</li>
+        </ul>
+      </section>
     </section>
 
-    <section id="features" class="features">
-      <h2>What LearnLoop AI does</h2>
-      <div class="feature-grid">
-        <article class="feature-card">
-          <h3>AI interview coach</h3>
-          <p>Realistic mock interviews powered by Google Gemini.</p>
-        </article>
-        <article class="feature-card">
-          <h3>Run code in the browser</h3>
-          <p>Write and execute Python with Pyodide, no backend install.</p>
-        </article>
-        <article class="feature-card">
-          <h3>Track your progress</h3>
-          <p>Save results and review feedback over time.</p>
-        </article>
+    <section id="roadmap" class="page-section" aria-label="12-week DSA roadmap">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Learning path</p>
+          <h2>12-Week DSA Roadmap</h2>
+        </div>
+        <button id="backToDashboardBtn" class="btn-ghost">Back to dashboard</button>
       </div>
-    </section>
 
-    <section id="how" class="how">
-      <h2>How it works</h2>
-      <ol class="steps">
-        <li>Pick a role and difficulty level.</li>
-        <li>Answer questions from the AI coach.</li>
-        <li>Run your Python solutions live.</li>
-        <li>Get feedback and improve.</li>
-      </ol>
-    </section>
-
-    <section id="cta" class="cta">
-      <h2>Ready to level up?</h2>
-      <p>Start your first interview in seconds.</p>
-      <a href="#" class="btn-primary">Get started</a>
+      <div id="roadmap-container" class="roadmap-grid"></div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p>LearnLoop AI &middot; Phase 1 landing page.</p>
-  </footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="app.js"></script>
 </body>
