@@ -87,9 +87,53 @@ const roadmap = [
 
 const STORAGE_KEY = 'learnloop-dsa-progress';
 const LESSON_STATE_KEY = 'learnloop-python-lesson-state';
+const PRACTICE_STATE_KEY = 'learnloop-python-practice-state';
 const PYTHON_STARTER_CODE = `ages = [12, 15, 18]
 print("Student ages:", ages)
 print("Average age:", sum(ages) / len(ages))`;
+
+const practiceExercises = [
+  {
+    id: 'variables-assignment',
+    title: 'Variables and assignment',
+    topic: 'Variables',
+    task: 'Create a variable named score and assign it the value 12. Then print score.',
+    goal: 'Understand how assignment stores a value for later use.',
+    starterCode: 'score = 12\nprint(score)',
+    expectedOutput: '12',
+    successMessage: 'Perfect! You used assignment correctly and printed the stored value.'
+  },
+  {
+    id: 'integers-arithmetic',
+    title: 'Integers and basic arithmetic',
+    topic: 'Arithmetic',
+    task: 'Write code that adds 4 and 6 and stores the result in a variable named total. Then print total.',
+    goal: 'Practice using integers with basic arithmetic operations.',
+    starterCode: 'total = 4 + 6\nprint(total)',
+    expectedOutput: '10',
+    successMessage: 'Nice work. Python can do arithmetic the same way a calculator does.'
+  },
+  {
+    id: 'strings-print',
+    title: 'Strings and print()',
+    topic: 'Strings',
+    task: 'Create a greeting string and print it exactly as shown.',
+    goal: 'Learn how strings are stored in quotes and displayed with print().',
+    starterCode: 'greeting = "Hello, learner!"\nprint(greeting)',
+    expectedOutput: 'Hello, learner!',
+    successMessage: 'Great job. Strings are text values, and print() displays them clearly.'
+  },
+  {
+    id: 'basic-data-types',
+    title: 'Basic data types',
+    topic: 'Data types',
+    task: 'Create a decimal value named temperature and a boolean named is_warm. Print both values.',
+    goal: 'Recognize float and boolean values in Python.',
+    starterCode: 'temperature = 21.5\nis_warm = True\nprint(temperature)\nprint(is_warm)',
+    expectedOutput: '21.5\nTrue',
+    successMessage: 'Excellent. You identified a float and a boolean and printed both values correctly.'
+  }
+];
 
 let pyodideInstance = null;
 let pyodideInitPromise = null;
@@ -175,6 +219,39 @@ function saveLessonState(state) {
   };
 
   localStorage.setItem(LESSON_STATE_KEY, JSON.stringify(safeState));
+}
+
+function loadPracticeState() {
+  try {
+    const savedPractice = JSON.parse(localStorage.getItem(PRACTICE_STATE_KEY) || '{}');
+    if (!savedPractice || typeof savedPractice !== 'object' || Array.isArray(savedPractice)) {
+      return { completed: {} };
+    }
+
+    const completed = savedPractice.completed && typeof savedPractice.completed === 'object' && !Array.isArray(savedPractice.completed)
+      ? savedPractice.completed
+      : {};
+
+    return {
+      completed: Object.fromEntries(
+        Object.entries(completed)
+          .filter(([exerciseId]) => practiceExercises.some((exercise) => exercise.id === exerciseId))
+          .map(([exerciseId, value]) => [exerciseId, value === true])
+      )
+    };
+  } catch (error) {
+    return { completed: {} };
+  }
+}
+
+function savePracticeState(state) {
+  const safeState = {
+    completed: state && typeof state === 'object' && state.completed && typeof state.completed === 'object'
+      ? state.completed
+      : {}
+  };
+
+  localStorage.setItem(PRACTICE_STATE_KEY, JSON.stringify(safeState));
 }
 
 function getLessonProgress() {
@@ -296,6 +373,33 @@ function renderLessonQuiz() {
   });
 }
 
+function normalizePythonOutput(value) {
+  return String(value ?? '').replace(/\r\n/g, '\n').trim();
+}
+
+async function executePythonCode(code) {
+  try {
+    const pyodide = await ensurePyodide();
+    const outputLines = [];
+
+    pyodide.setStdout({ batched: (text) => outputLines.push(String(text)) });
+    pyodide.setStderr({ batched: (text) => outputLines.push(String(text)) });
+
+    await pyodide.runPythonAsync(code);
+
+    return {
+      ok: true,
+      output: normalizePythonOutput(outputLines.join('') || 'Program finished successfully.')
+    };
+  } catch (error) {
+    const message = error && error.message ? error.message : String(error);
+    return {
+      ok: false,
+      output: normalizePythonOutput(message)
+    };
+  }
+}
+
 function setPythonOutput(message, isError = false) {
   const outputElement = document.getElementById('python-output');
   const statusElement = document.getElementById('python-status');
@@ -373,21 +477,205 @@ function setupPythonRunner() {
     setPythonOutput('Loading Python environment...');
 
     try {
-      const pyodide = await ensurePyodide();
-      const outputLines = [];
-      pyodide.setStdout({ batched: (text) => outputLines.push(String(text)) });
-      pyodide.setStderr({ batched: (text) => outputLines.push(String(text)) });
+      const result = await executePythonCode(code);
+      if (!result.ok) {
+        setPythonOutput(`Python error:\n${result.output}`, true);
+        return;
+      }
 
-      await pyodide.runPythonAsync(code);
-
-      const output = outputLines.join('') || 'Program finished successfully.';
-      setPythonOutput(output.trim() || 'Program finished successfully.');
+      setPythonOutput(result.output);
       statusElement.textContent = 'Execution complete';
-    } catch (error) {
-      const message = error && error.message ? error.message : String(error);
-      setPythonOutput(`Python error:\n${message}`, true);
     } finally {
       setRunningState(false);
+    }
+  });
+}
+
+function setupPracticeExercises() {
+  const practiceContainer = document.getElementById('practice-exercises');
+  if (!practiceContainer) {
+    return;
+  }
+
+  if (practiceContainer.dataset.practiceBound === 'true') {
+    return;
+  }
+
+  const savedState = loadPracticeState();
+
+  practiceContainer.innerHTML = practiceExercises.map((exercise) => {
+    const isCompleted = Boolean(savedState.completed[exercise.id]);
+    return `
+      <div class="practice-card ${isCompleted ? 'completed' : ''}" data-exercise-id="${exercise.id}">
+        <div class="practice-header">
+          <div>
+            <h4>${exercise.title}</h4>
+            <p class="practice-topic">${exercise.topic}</p>
+          </div>
+          <span class="practice-badge ${isCompleted ? 'done' : ''}">${isCompleted ? 'Completed' : 'Ready'}</span>
+        </div>
+        <p class="practice-task">${exercise.task}</p>
+        <p class="practice-goal"><strong>Goal:</strong> ${exercise.goal}</p>
+        <textarea class="practice-code" aria-label="${exercise.title} Python practice code">${exercise.starterCode}</textarea>
+        <div class="practice-actions">
+          <button type="button" class="practice-run-btn btn-ghost">Run code</button>
+          <button type="button" class="practice-check-btn btn-primary">Check answer</button>
+        </div>
+        <div class="practice-output" aria-live="polite">Output will appear here.</div>
+        <div class="practice-feedback"></div>
+      </div>
+    `;
+  }).join('');
+
+  const applyCompletedState = (card, isCompleted) => {
+    const badge = card.querySelector('.practice-badge');
+    const cardState = card;
+
+    cardState.classList.toggle('completed', isCompleted);
+    if (badge) {
+      badge.textContent = isCompleted ? 'Completed' : 'Ready';
+      badge.classList.toggle('done', isCompleted);
+    }
+  };
+
+  const runPracticeExercise = async (card) => {
+    const exerciseId = card.dataset.exerciseId;
+    const exercise = practiceExercises.find((item) => item.id === exerciseId);
+    const code = card.querySelector('.practice-code')?.value?.trim() || '';
+    const outputEl = card.querySelector('.practice-output');
+    const feedbackEl = card.querySelector('.practice-feedback');
+
+    if (!exercise || !code) {
+      if (outputEl) {
+        outputEl.textContent = 'Please enter some Python code before running.';
+        outputEl.classList.add('error');
+      }
+      if (feedbackEl) {
+        feedbackEl.textContent = 'Add a small Python snippet before trying the exercise.';
+        feedbackEl.classList.remove('success');
+        feedbackEl.classList.add('warning');
+      }
+      return;
+    }
+
+    if (outputEl) {
+      outputEl.textContent = 'Running your code...';
+      outputEl.classList.remove('error');
+    }
+    if (feedbackEl) {
+      feedbackEl.textContent = 'Running your code...';
+      feedbackEl.classList.remove('warning', 'success');
+    }
+
+    const result = await executePythonCode(code);
+
+    if (outputEl) {
+      outputEl.textContent = result.ok ? result.output : `Python error:\n${result.output}`;
+      outputEl.classList.toggle('error', !result.ok);
+    }
+
+    if (feedbackEl) {
+      feedbackEl.textContent = result.ok
+        ? 'The code ran successfully. Use Check answer to see if it matches the exercise goal.'
+        : 'The code raised a Python error. Fix the syntax or variable names and try again.';
+      feedbackEl.classList.toggle('warning', !result.ok);
+      feedbackEl.classList.toggle('success', result.ok);
+    }
+  };
+
+  const checkPracticeExercise = async (card) => {
+    const exerciseId = card.dataset.exerciseId;
+    const exercise = practiceExercises.find((item) => item.id === exerciseId);
+    const code = card.querySelector('.practice-code')?.value?.trim() || '';
+    const outputEl = card.querySelector('.practice-output');
+    const feedbackEl = card.querySelector('.practice-feedback');
+
+    if (!exercise) {
+      return;
+    }
+
+    const savedState = loadPracticeState();
+    if (savedState.completed[exercise.id] === true) {
+      if (feedbackEl) {
+        feedbackEl.textContent = 'This exercise is already complete. You can review it or continue to the next one.';
+        feedbackEl.classList.remove('warning');
+        feedbackEl.classList.add('success');
+      }
+      return;
+    }
+
+    if (!code) {
+      if (outputEl) {
+        outputEl.textContent = 'Please write some code before checking the exercise.';
+        outputEl.classList.add('error');
+      }
+      if (feedbackEl) {
+        feedbackEl.textContent = 'Your answer is empty. Add the Python code first.';
+        feedbackEl.classList.remove('success');
+        feedbackEl.classList.add('warning');
+      }
+      return;
+    }
+
+    const result = await executePythonCode(code);
+    if (!result.ok) {
+      if (outputEl) {
+        outputEl.textContent = `Python error:\n${result.output}`;
+        outputEl.classList.add('error');
+      }
+      if (feedbackEl) {
+        feedbackEl.textContent = 'The code has a Python error. Fix the syntax and try again.';
+        feedbackEl.classList.remove('success');
+        feedbackEl.classList.add('warning');
+      }
+      return;
+    }
+
+    const normalizedOutput = normalizePythonOutput(result.output);
+    const expectedOutput = normalizePythonOutput(exercise.expectedOutput);
+    const isCorrect = normalizedOutput === expectedOutput;
+
+    if (outputEl) {
+      outputEl.textContent = result.output;
+      outputEl.classList.remove('error');
+    }
+
+    if (feedbackEl) {
+      if (isCorrect) {
+        savedState.completed[exercise.id] = true;
+        savePracticeState(savedState);
+        applyCompletedState(card, true);
+        feedbackEl.textContent = exercise.successMessage;
+        feedbackEl.classList.remove('warning');
+        feedbackEl.classList.add('success');
+        showToast('Exercise complete!');
+      } else {
+        feedbackEl.textContent = `Not quite. Your output was: ${result.output || 'empty'}\nHint: ${exercise.goal}`;
+        feedbackEl.classList.remove('success');
+        feedbackEl.classList.add('warning');
+        showToast('Check the output and try again.');
+      }
+    }
+  };
+
+  practiceContainer.dataset.practiceBound = 'true';
+  practiceContainer.addEventListener('click', async (event) => {
+    const runButton = event.target.closest('.practice-run-btn');
+    const checkButton = event.target.closest('.practice-check-btn');
+
+    if (runButton) {
+      const card = runButton.closest('.practice-card');
+      if (card) {
+        await runPracticeExercise(card);
+      }
+      return;
+    }
+
+    if (checkButton) {
+      const card = checkButton.closest('.practice-card');
+      if (card) {
+        await checkPracticeExercise(card);
+      }
     }
   });
 }
@@ -615,6 +903,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderLessonQuiz();
   updateLessonProgressUI();
   setupPythonRunner();
+  setupPracticeExercises();
 
   const statusLabel = document.getElementById('backend-status-label');
   const statusDot = document.querySelector('.status-dot');

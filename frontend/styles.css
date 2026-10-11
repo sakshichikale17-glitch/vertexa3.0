@@ -463,6 +463,135 @@ a {
   margin-top: 1rem;
 }
 
+.practice-panel {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.practice-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.8rem;
+}
+
+.practice-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0.9rem;
+  padding: 1rem;
+}
+
+.practice-card.completed {
+  border-color: rgba(126, 231, 197, 0.5);
+  background: rgba(10, 24, 21, 0.5);
+}
+
+.practice-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin-bottom: 0.65rem;
+}
+
+.practice-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.practice-topic {
+  margin: 0.2rem 0 0;
+  color: var(--secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.practice-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: rgba(70, 198, 255, 0.12);
+  color: var(--secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.practice-badge.done {
+  background: rgba(126, 231, 197, 0.12);
+  color: var(--success);
+}
+
+.practice-task,
+.practice-goal {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+}
+
+.practice-goal strong {
+  color: var(--text);
+}
+
+.practice-code {
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: rgba(9, 13, 26, 0.9);
+  color: var(--text);
+  padding: 0.8rem 0.9rem;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.practice-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.practice-output {
+  margin-top: 0.8rem;
+  min-height: 84px;
+  max-height: 180px;
+  overflow: auto;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(146, 161, 255, 0.18);
+  background: rgba(9, 13, 26, 0.9);
+  color: var(--text);
+  font-family: Consolas, Monaco, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.practice-output.error {
+  border-color: rgba(255, 125, 125, 0.6);
+  color: #ffd1d1;
+}
+
+.practice-feedback {
+  margin-top: 0.75rem;
+  min-height: 1.3rem;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+.practice-feedback.success {
+  color: var(--success);
+}
+
+.practice-feedback.warning {
+  color: var(--warning);
+}
+
 .runner-header {
   display: flex;
   justify-content: space-between;
