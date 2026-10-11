@@ -1,0 +1,20 @@
+{
+  "name": "learnloop-ai-backend",
+  "version": "1.0.0",
+  "description": "LearnLoop AI backend for Phase 1",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "learnloop",
+    "express",
+    "phase1"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.0.1",
+    "express": "^4.21.2"
+  }
+}
