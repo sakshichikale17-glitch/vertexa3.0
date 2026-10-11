@@ -16,7 +16,7 @@
     <nav class="site-nav" aria-label="Main navigation">
       <button class="nav-link active" data-target="dashboard">Dashboard</button>
       <button class="nav-link" data-target="roadmap">Roadmap</button>
-      <button class="nav-link coming-soon" data-message="Learn DSA is coming soon.">Learn DSA</button>
+      <button class="nav-link" data-target="lesson">Learn DSA</button>
       <button class="nav-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
       <button class="nav-link coming-soon" data-message="Practice is coming soon.">Practice</button>
       <button class="nav-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
@@ -72,7 +72,7 @@
           <span class="chip">Study path</span>
         </div>
         <div class="quick-links-grid">
-          <button class="feature-link coming-soon" data-message="Learn DSA is coming soon.">Learn DSA</button>
+          <button class="feature-link" data-target="lesson">Learn DSA</button>
           <button class="feature-link coming-soon" data-message="Code Lab is coming soon.">Code Lab</button>
           <button class="feature-link coming-soon" data-message="Practice is coming soon.">Practice</button>
           <button class="feature-link coming-soon" data-message="Interview Arena is coming soon.">Interview Arena</button>
@@ -109,6 +109,146 @@
           <li>Evidence-based progress tracking for answers, hints, and assessment improvement.</li>
         </ul>
       </section>
+    </section>
+
+    <section id="lesson" class="page-section" aria-label="Python Basics lesson">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Learn DSA</p>
+          <h2>Python Basics</h2>
+        </div>
+        <button id="lessonBackToDashboardBtn" class="btn-ghost">Back to dashboard</button>
+      </div>
+
+      <div class="lesson-layout">
+        <article class="lesson-panel lesson-body">
+          <div class="lesson-progress">
+            <div class="progress-header">
+              <span>Lesson progress</span>
+              <span id="lesson-progress-text">0/4 mastered</span>
+            </div>
+            <div class="progress-track">
+              <div id="lesson-progress-bar" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Learning objectives</h3>
+            <ul>
+              <li>Understand what variables are and why they help us store information.</li>
+              <li>Learn the main Python data types used in beginner coding.</li>
+              <li>Use <code>print()</code> to display results clearly.</li>
+              <li>Practice basic arithmetic and see how Python evaluates expressions.</li>
+            </ul>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Variables</h3>
+            <p>
+              A variable is like a labeled box where we store a value. We can then use that value later in our program.
+            </p>
+            <p><strong>Real-life analogy:</strong> Think of a variable as a notebook label such as “apple_count = 5”. The label helps you find the value quickly.</p>
+            <pre><code>age = 18
+name = "Aisha"
+print(age)
+print(name)</code></pre>
+            <p class="code-note">Expected output:</p>
+            <pre><code>18
+Aisha</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Data types</h3>
+            <p>Python stores different kinds of information in different data types. Common beginner types are integers, floats, strings, and booleans.</p>
+            <ul>
+              <li><strong>int</strong>: whole numbers like 5, -2, 12</li>
+              <li><strong>float</strong>: decimal numbers like 3.5, 10.0</li>
+              <li><strong>str</strong>: text like "hello"</li>
+              <li><strong>bool</strong>: True or False</li>
+            </ul>
+            <p><strong>Real-life analogy:</strong> A data type tells us what kind of thing is inside a box. A box might hold a number, a word, or a true/false answer.</p>
+            <pre><code>score = 10
+pi = 3.14
+message = "Ready"
+passed = True
+
+print(score)
+print(pi)
+print(message)
+print(passed)</code></pre>
+            <p class="code-note">Expected output:</p>
+            <pre><code>10
+3.14
+Ready
+True</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Using <code>print()</code></h3>
+            <p><code>print()</code> shows information on the screen so we can check our program’s result.</p>
+            <p><strong>Real-life analogy:</strong> It is like saying “show me what is inside the box” so you can check your answer.</p>
+            <pre><code>print("Hello, Learner!")
+print(3 + 4)</code></pre>
+            <p class="code-note">Expected output:</p>
+            <pre><code>Hello, Learner!
+7</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Basic arithmetic</h3>
+            <p>Python can do arithmetic just like a calculator. It follows the normal order of operations.</p>
+            <pre><code>total = 10 + 5
+leftover = 20 - 7
+product = 4 * 3
+division = 12 / 3
+
+print(total)
+print(leftover)
+print(product)
+print(division)</code></pre>
+            <p class="code-note">Expected output:</p>
+            <pre><code>15
+13
+12
+4.0</code></pre>
+          </div>
+
+          <div class="lesson-section">
+            <h3>Step-by-step trace</h3>
+            <p>Here is a small example and how Python reads it line by line.</p>
+            <pre><code>first = 5
+second = 3
+answer = first + second
+print(answer)</code></pre>
+            <ol class="trace-list">
+              <li><strong>first = 5</strong> creates a variable with the value 5.</li>
+              <li><strong>second = 3</strong> creates another variable with the value 3.</li>
+              <li><strong>answer = first + second</strong> adds 5 and 3 to get 8.</li>
+              <li><strong>print(answer)</strong> displays 8.</li>
+            </ol>
+            <p class="code-note">Expected output:</p>
+            <pre><code>8</code></pre>
+          </div>
+
+          <div class="lesson-section lesson-summary">
+            <h3>Lesson summary</h3>
+            <p>
+              Variables let us store values. Data types tell Python what kind of value we are using. The <code>print()</code> function helps us show information on the screen. Basic arithmetic lets us calculate values quickly and clearly.
+            </p>
+          </div>
+        </article>
+
+        <aside class="lesson-panel lesson-box">
+          <h3>Knowledge check</h3>
+          <div id="quiz-container"></div>
+
+          <div class="next-lesson-box">
+            <h4>Next lesson placeholder</h4>
+            <p>Big O Notation</p>
+            <button id="nextLessonPlaceholderBtn" class="btn-ghost" data-target="roadmap">Back to roadmap</button>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <section id="roadmap" class="page-section" aria-label="12-week DSA roadmap">

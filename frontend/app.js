@@ -86,6 +86,38 @@ const roadmap = [
 ];
 
 const STORAGE_KEY = 'learnloop-dsa-progress';
+const LESSON_STATE_KEY = 'learnloop-python-lesson-state';
+
+const lessonQuestions = [
+  {
+    id: 'q1',
+    prompt: 'Which statement creates a variable that stores a whole number?',
+    options: ['print(12)', 'number = 12', '"12"', '12 + 3'],
+    correctIndex: 1,
+    explanation: 'The correct answer is `number = 12` because we store a value in a variable using `=`.'
+  },
+  {
+    id: 'q2',
+    prompt: 'What is the main purpose of print() in Python?',
+    options: ['It creates a file', 'It displays output to the screen', 'It repeats code', 'It deletes a variable'],
+    correctIndex: 1,
+    explanation: '`print()` is used to show information on the screen so we can check the program output.'
+  },
+  {
+    id: 'q3',
+    prompt: 'Which value is a string?',
+    options: ['42', 'True', '"hello"', '3.14'],
+    correctIndex: 2,
+    explanation: 'A string is text wrapped in quotes, so `"hello"` is the correct answer.'
+  },
+  {
+    id: 'q4',
+    prompt: 'What does 7 + 3 evaluate to in Python?',
+    options: ['73', '10', '4', '7 3'],
+    correctIndex: 1,
+    explanation: 'Python adds numbers the same way a calculator does, so `7 + 3` equals `10`.'
+  }
+];
 
 function loadCompletedWeeks() {
   try {
@@ -98,6 +130,164 @@ function loadCompletedWeeks() {
 
 function saveCompletedWeeks(completedWeeks) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(completedWeeks));
+}
+
+function loadLessonState() {
+  try {
+    const savedLesson = JSON.parse(localStorage.getItem(LESSON_STATE_KEY) || '{}');
+    if (!savedLesson || typeof savedLesson !== 'object' || Array.isArray(savedLesson)) {
+      return { answers: {} };
+    }
+
+    const answers = savedLesson.answers && typeof savedLesson.answers === 'object' && !Array.isArray(savedLesson.answers)
+      ? savedLesson.answers
+      : {};
+
+    return {
+      answers: Object.fromEntries(
+        Object.entries(answers).filter(([questionId]) => lessonQuestions.some((question) => question.id === questionId))
+          .map(([questionId, answer]) => {
+            const safeAnswer = answer && typeof answer === 'object' ? answer : {};
+            return [questionId, {
+              selected: Number.isInteger(safeAnswer.selected) ? safeAnswer.selected : null,
+              correct: safeAnswer.correct === true,
+              attempts: Number.isInteger(safeAnswer.attempts) ? safeAnswer.attempts : 0
+            }];
+          })
+      )
+    };
+  } catch (error) {
+    return { answers: {} };
+  }
+}
+
+function saveLessonState(state) {
+  const safeState = {
+    answers: state && typeof state === 'object' && state.answers && typeof state.answers === 'object'
+      ? state.answers
+      : {}
+  };
+
+  localStorage.setItem(LESSON_STATE_KEY, JSON.stringify(safeState));
+}
+
+function getLessonProgress() {
+  const state = loadLessonState();
+  const answers = state.answers || {};
+  const correctCount = lessonQuestions.filter((question) => answers[question.id]?.correct === true).length;
+  return {
+    correctCount,
+    totalCount: lessonQuestions.length
+  };
+}
+
+function updateLessonProgressUI() {
+  const progressText = document.getElementById('lesson-progress-text');
+  const progressBar = document.getElementById('lesson-progress-bar');
+  if (!progressText || !progressBar) {
+    return;
+  }
+
+  const { correctCount, totalCount } = getLessonProgress();
+  const percent = totalCount ? (correctCount / totalCount) * 100 : 0;
+  progressText.textContent = `${correctCount}/${totalCount} mastered`;
+  progressBar.style.width = `${percent}%`;
+}
+
+function renderLessonQuiz() {
+  const quizContainer = document.getElementById('quiz-container');
+  if (!quizContainer) {
+    return;
+  }
+
+  const state = loadLessonState();
+  const answers = state.answers || {};
+
+  quizContainer.innerHTML = lessonQuestions.map((question, index) => {
+    const savedAnswer = answers[question.id];
+    const hasCorrectAnswer = savedAnswer && savedAnswer.correct === true;
+
+    const optionMarkup = question.options.map((option, optionIndex) => {
+      const isCorrectOption = optionIndex === question.correctIndex;
+      const isSelected = savedAnswer && savedAnswer.selected === optionIndex;
+      const classes = ['quiz-option'];
+
+      if (hasCorrectAnswer && isCorrectOption) {
+        classes.push('correct');
+      }
+
+      if (savedAnswer && !hasCorrectAnswer && isSelected && !isCorrectOption) {
+        classes.push('incorrect');
+      }
+
+      return `
+        <button
+          type="button"
+          class="${classes.join(' ')}"
+          data-question-id="${question.id}"
+          data-option-index="${optionIndex}"
+          ${hasCorrectAnswer ? 'disabled' : ''}
+        >
+          ${option}
+        </button>
+      `;
+    }).join('');
+
+    const feedbackMarkup = savedAnswer
+      ? `<p class="quiz-feedback ${savedAnswer.correct ? 'success' : 'warning'}">
+          ${savedAnswer.correct ? 'Correct! ' : 'Not quite. '}${question.explanation}
+        </p>`
+      : '';
+
+    return `
+      <div class="quiz-card">
+        <p class="quiz-question">Q${index + 1}. ${question.prompt}</p>
+        <div class="quiz-options">
+          ${optionMarkup}
+        </div>
+        ${feedbackMarkup}
+      </div>
+    `;
+  }).join('');
+
+  const optionButtons = quizContainer.querySelectorAll('.quiz-option');
+  optionButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const questionId = button.dataset.questionId;
+      const selectedIndex = Number(button.dataset.optionIndex);
+      const question = lessonQuestions.find((item) => item.id === questionId);
+
+      if (!question) {
+        return;
+      }
+
+      const state = loadLessonState();
+      const answers = state.answers || {};
+      const previousAnswer = answers[questionId] || {};
+
+      if (previousAnswer.correct === true) {
+        return;
+      }
+
+      const isCorrect = selectedIndex === question.correctIndex;
+      answers[questionId] = {
+        selected: selectedIndex,
+        correct: isCorrect,
+        attempts: (Number.isInteger(previousAnswer.attempts) ? previousAnswer.attempts : 0) + 1
+      };
+
+      state.answers = answers;
+      saveLessonState(state);
+      renderLessonQuiz();
+      updateLessonProgressUI();
+
+      if (isCorrect) {
+        showToast('Correct answer! Nice work.');
+      } else {
+        showToast('Not quite — try again.');
+      }
+    });
+  });
 }
 
 function showToast(message) {
@@ -274,7 +464,7 @@ function renderDashboard() {
 }
 
 function attachNavigation() {
-  const targetButtons = document.querySelectorAll('.nav-link[data-target]');
+  const targetButtons = document.querySelectorAll('[data-target]');
   targetButtons.forEach((button) => {
     button.addEventListener('click', () => {
       const target = button.dataset.target;
@@ -282,23 +472,13 @@ function attachNavigation() {
         return;
       }
 
+      if (button.classList.contains('coming-soon')) {
+        const message = button.dataset.message || 'This feature is coming soon.';
+        showToast(message);
+        return;
+      }
+
       showSection(target);
-    });
-  });
-
-  const comingSoonButtons = document.querySelectorAll('.coming-soon');
-  comingSoonButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const message = button.dataset.message || 'This feature is coming soon.';
-      showToast(message);
-    });
-  });
-
-  const featureLinks = document.querySelectorAll('.feature-link');
-  featureLinks.forEach((button) => {
-    button.addEventListener('click', () => {
-      const message = button.dataset.message || 'This feature is coming soon.';
-      showToast(message);
     });
   });
 
@@ -311,12 +491,27 @@ function attachNavigation() {
   if (backToDashboardBtn) {
     backToDashboardBtn.addEventListener('click', () => showSection('dashboard'));
   }
+
+  const lessonBackBtn = document.getElementById('lessonBackToDashboardBtn');
+  if (lessonBackBtn) {
+    lessonBackBtn.addEventListener('click', () => showSection('dashboard'));
+  }
+
+  const nextLessonPlaceholderBtn = document.getElementById('nextLessonPlaceholderBtn');
+  if (nextLessonPlaceholderBtn) {
+    nextLessonPlaceholderBtn.addEventListener('click', () => {
+      showSection('roadmap');
+      showToast('Big O Notation is a future lesson placeholder.');
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   attachNavigation();
   renderRoadmap();
   renderDashboard();
+  renderLessonQuiz();
+  updateLessonProgressUI();
 
   const statusLabel = document.getElementById('backend-status-label');
   const statusDot = document.querySelector('.status-dot');
